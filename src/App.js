@@ -1,25 +1,21 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import ReactGA from "react-ga";
+import RootRouter from "./RootRouter";
+import { Router } from "react-router";
+import rootHistory from "./RootHistory";
+import HomeScreen from "./Screens/HomeScreen";
+import InitialScreen from "./Screens/InitialScreen";
 
 function App() {
+  rootHistory.listen((location) => {
+    ReactGA.set({ page: location.pathname });
+    ReactGA.pageview(location.pathname);
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router history={rootHistory}>
+      <RootRouter></RootRouter>
+    </Router>
   );
 }
 
