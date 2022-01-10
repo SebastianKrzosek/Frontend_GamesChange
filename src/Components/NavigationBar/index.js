@@ -1,31 +1,45 @@
 import React from "react";
-import { Wrapper, NavLink } from "./style";
-import { BrowserRouter as Router, Route, useHistory } from "react-router-dom";
+import {
+  Wrapper,
+  Links,
+  LogoImage,
+  HomeLinkWrapper,
+  AddLinkWrapper,
+  LinkText,
+} from "./style";
+import { BrowserRouter as Router, useHistory } from "react-router-dom";
+import HomeIcon from "../../Images/home.png";
+import PlusIcon from "../../Images/plus.png";
 
-const NavigationBar = () => {
+const NavigationBar = (props) => {
   let history = useHistory();
 
   return (
     <Wrapper>
       <Router>
-        <NavLink
-          to={"/"}
-          active={false}
-          onClick={() => {
-            history.push("/");
-          }}
-        >
-          <p>Home</p>
-        </NavLink>
-        <NavLink
-          to={"/other"}
-          active={false}
-          onClick={() => {
-            history.push("/other");
-          }}
-        >
-          <p>Other</p>
-        </NavLink>
+        <HomeLinkWrapper active={props.active}>
+          <Links
+            to={"/"}
+            onClick={() => {
+              history.push("/");
+            }}
+          >
+            <LogoImage src={HomeIcon}></LogoImage>
+            <LinkText>Home</LinkText>
+          </Links>
+        </HomeLinkWrapper>
+
+        <AddLinkWrapper active={props.active}>
+          <Links
+            to={"/add"}
+            onClick={() => {
+              history.push("/add");
+            }}
+          >
+            <LogoImage src={PlusIcon}></LogoImage>
+            <LinkText>Add</LinkText>
+          </Links>
+        </AddLinkWrapper>
       </Router>
     </Wrapper>
   );

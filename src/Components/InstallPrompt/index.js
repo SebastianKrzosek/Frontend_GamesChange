@@ -16,9 +16,8 @@ const Example = () => {
 
   return (
     <Wrapper>
-      <Info>Pobierz aplikacje:</Info>
+      <Info>Pobierz apke:</Info>
       <Image src={DownloadApp} alt="Install app" onClick={onClickInstall} />
-      <buttom onClick={onClickInstall}> install</buttom>
     </Wrapper>
   );
 };

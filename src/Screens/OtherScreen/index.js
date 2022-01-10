@@ -1,13 +1,13 @@
 import React from "react";
-import { Link } from "react-router-dom";
-
+import { BackgroundContainer } from "../HomeScreen/style";
+import NavigationBar from "../../Components/NavigationBar";
+import AddGuestPost from "../../Components/AddGuestPost";
 const OtherScreen = () => {
   return (
-    <div>
-      <h1>I am other</h1>
-      <h2>Say hello</h2>
-      <Link to="/">Wróć</Link>
-    </div>
+    <BackgroundContainer>
+      <AddGuestPost></AddGuestPost>
+      <NavigationBar active="Add" />
+    </BackgroundContainer>
   );
 };
 

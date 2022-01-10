@@ -1,24 +1,38 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { BackgroundContainer } from "./style";
-import Header from "../../Components/Header/index";
+import React, { useState, useEffect } from "react";
+import {
+  BackgroundContainer,
+  SmallPostsContainer,
+  SmallPostWrapper,
+} from "./style";
+import LoginHeader from "../../Components/LoginHeader";
 import NavigationBar from "../../Components/NavigationBar";
-import InstallPrompt from "../../Components/InstallPrompt/index";
+import SmallPost from "../../Components/SmallPost";
 
 const HomeScreen = () => {
+  const [posts, setPosts] = useState();
+
+  useEffect(() => {
+    fetch("http://localhost:8080/api/posts/wall")
+      .then((response) => response.json())
+      .then((data) => setPosts(data))
+      .catch((err) => console.error(err));
+  }, []);
+
   return (
-    <div>
-      {/* <Header /> */}
-      <InstallPrompt></InstallPrompt>
-      <BackgroundContainer>
-        <div>
-          <h1>hello world from the HomeScreen</h1>
-          <h2>maybe do u wanna install app?</h2>
-          <Link to="/other">Other</Link>
-        </div>
-        <NavigationBar />
-      </BackgroundContainer>
-    </div>
+    <BackgroundContainer>
+      <LoginHeader />
+      <SmallPostsContainer>
+        {posts &&
+          posts.map((post) => {
+            return (
+              <SmallPostWrapper>
+                <SmallPost key={post._id} props={post} />
+              </SmallPostWrapper>
+            );
+          })}
+      </SmallPostsContainer>
+      <NavigationBar active="Home" />
+    </BackgroundContainer>
   );
 };
 export default HomeScreen;
