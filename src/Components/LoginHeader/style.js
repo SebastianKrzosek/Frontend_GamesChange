@@ -1,14 +1,27 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { createBreakpoint } from "styled-components-breakpoint";
+const breakpoints = {
+  xs: 0,
+  sm: 576,
+  md: 768,
+  lg: 992,
+  xl: 1200,
+};
+const breakpoint = createBreakpoint(breakpoints);
 
 export const Container = styled.div`
-  position: absolute;
   display: flex;
-  margin: 0;
-  margin-right: 25px;
-  right: 0;
-  top: 0;
+  align-items: center;
+  justify-content: center;
+
+  ${breakpoint("md")`
+    margin: 0 0 0 auto;
+  padding-right: 70px;
+  `}
 `;
+
+export const Wrapper = styled.div``;
 
 export const Text = styled(Link)`
   text-decoration: none;

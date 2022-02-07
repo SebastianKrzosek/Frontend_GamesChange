@@ -71,16 +71,85 @@ self.addEventListener("message", (event) => {
 });
 
 // Any other custom service worker logic can go here.
+const CACHE_STATIC_NAME = "static-v1";
+const CACHE_DYNAMIC_NAME = "dynamic-v1";
+var STATIC_FILES = [
+  "/",
+  "/public/index.html",
+  "/public/fonts/font.css",
+  "/src/App.js",
+  "/src/App.css",
+  "/src/index.js",
+  "/src/index.css",
+  "/src/RootRouter.js",
+  "/src/Screens/HomeScreen/index.js",
+  "/src/Screens/HomeScreen/style.js",
+  "/src/Screens/OfflineScreen/index.js",
+  "/src/Screens/OfflineScreen/style.js",
+  "/src/Screens/InitialScreen/index.js",
+  "/src/Screens/LoginScreen/index.js",
+  "/src/Screens/LoginScreen/style.js",
+  "/src/Screens/OtherScreen/index.js",
+  "/src/Screens/OtherScreen/style.js",
+  "/src/Screens/PostScreen/index.js",
+  "/src/Screens/PostScreen/style.js",
+  "/src/Screens/RegisterScreen/index.js",
+  "/src/Screens/RegisterScreen/style.js",
+  "/src/Screens/UserScreen/index.js",
+  "/src/Screens/UserScreen/style.js",
+];
+
 self.addEventListener("install", (event) => {
-  console.log("[Service Worker] installing service worker: ", event);
+  console.log("[Service Worker] - installing service worker: ", event);
+  event.waitUntil(
+    caches.open(CACHE_STATIC_NAME).then((cache) => {
+      console.log("[Service Worker] - Precach open");
+      cache.addAll(STATIC_FILES);
+    })
+  );
 });
 
 self.addEventListener("activate", (event) => {
-  console.log("[Service Worker] activating service worker: ", event);
+  console.log("[Service Worker] activating service worker... ", event);
+  // event.waitUntil(
+  //   caches.keys().then((keyList) => {
+  //     return Promise.all(
+  //       keyList.map((key) => {
+  //         if (
+  //           key !== CACHE_STATIC_NAME &&
+  //           key !== CACHE_DYNAMIC_NAME &&
+  //           key !== "workbox-precache-v2"
+  //         ) {
+  //           caches.delete(key);
+  //         }
+  //       })
+  //     );
+  //   })
+  // );
   return clientsClaim();
 });
 
 self.addEventListener("fetch", (event) => {
-  console.log(`[Service Worker] Fetching somethink... `, event);
-  event.respondWith(fetch(event.request));
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      if (response) {
+        return response;
+      } else {
+        return fetch(event.request)
+          .then(function (res) {
+            return caches.open(CACHE_DYNAMIC_NAME).then(function (cache) {
+              cache.put(event.request.url, res.clone());
+              return res;
+            });
+          })
+          .catch((err) => {
+            caches.open(CACHE_STATIC_NAME).then((cache) => {
+              if (event.request.headers.get("accept").includes("text/html")) {
+                return cache.match("/src/Screens/OfflineScreen/index.js");
+              }
+            });
+          });
+      }
+    })
+  );
 });

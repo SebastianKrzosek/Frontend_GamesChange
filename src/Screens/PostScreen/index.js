@@ -25,14 +25,31 @@ const PostScreen = (props) => {
   const [post, setPost] = useState();
 
   useEffect(() => {
+    let dataFromWeb = false;
     fetch("http://localhost:8080/api/posts/wall")
       .then((response) => response.json())
       .then((data) =>
         data.map((post) => {
-          if (props.match.params.postid === post._id) setPost(post);
+          if (props.match.params.postid === post._id) {
+            dataFromWeb = true;
+            console.log("from web", post);
+            setPost(post);
+          }
         })
       )
       .catch((err) => console.error(err));
+
+    if ("caches" in window) {
+      window.caches
+        .match("http://localhost:8080/api/posts/wall")
+        .then((response) => response.json())
+        .then((data) => {
+          if (!dataFromWeb) {
+            console.log("from cache", data);
+            setPost(data);
+          }
+        });
+    }
   }, []);
 
   return post ? (

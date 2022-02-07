@@ -47,7 +47,6 @@ const LoginScreen = () => {
         .then((result) => result.json())
         .then((res) => {
           if (res.success) {
-            console.log(res.token);
             localStorage.removeItem("token");
             localStorage.setItem("token", res.token);
             window.dispatchEvent(new Event("storage"));
@@ -93,7 +92,12 @@ const LoginScreen = () => {
 
         <TextWrapper>
           <Text>nie masz jeszcze konta?</Text>
-          <StyledLink>
+          <StyledLink
+            to="/register"
+            onClick={() => {
+              history.push("/register");
+            }}
+          >
             <RegisterText>zarejestruj sie!</RegisterText>
           </StyledLink>
         </TextWrapper>

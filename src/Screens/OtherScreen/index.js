@@ -1,5 +1,5 @@
 import React from "react";
-import { BackgroundContainer } from "../HomeScreen/style";
+import { BackgroundContainer } from "./style";
 import NavigationBar from "../../Components/NavigationBar";
 import AddGuestPost from "../../Components/AddGuestPost";
 const OtherScreen = () => {

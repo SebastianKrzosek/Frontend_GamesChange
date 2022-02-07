@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
   AddPostContainer,
@@ -18,10 +18,34 @@ const AddGuestPost = () => {
   const [email, setEmail] = useState("");
   const [city, setCity] = useState();
   const [photo, setPhoto] = useState();
+  const [token, setToken] = useState();
+  const [user, setUser] = useState();
   let error;
+
+  useEffect(() => {
+    const tok = localStorage.getItem("token");
+    setToken(tok);
+
+    fetch("http://localhost:8080/api/profile/current", {
+      headers: new Headers({
+        Authorization: tok,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setUser(data);
+      })
+      .catch((err) => console.error(err));
+  }, []);
 
   const validAndSendPost = () => {
     try {
+      if (user) {
+        setPhone(user.phone);
+        setEmail(user.email);
+        setCity(user.city);
+      }
+
       if (type === "Typ konsoli" || type === "") {
         error = "Wybrano zły typ konsoli.";
         throw error;
@@ -73,7 +97,11 @@ const AddGuestPost = () => {
   return (
     <AddPostContainer>
       <div>
-        <Title>DODAJ POST JAKO GOSC</Title>
+        {user ? (
+          <Title>DODAJ POST JAKO {user.login.toUpperCase()}</Title>
+        ) : (
+          <Title>DODAJ POST JAKO GOSC</Title>
+        )}
       </div>
       <div>
         <Select
@@ -108,45 +136,50 @@ const AddGuestPost = () => {
               onChange={(e) => setDesc(e.target.value)}
             ></TextArea>
           </div>
-          <div>
-            <label>
-              <Input
-                required
-                type="number"
-                name="phone"
-                placeholder="Telefon"
-                onChange={(e) => {
-                  setPhone(e.target.value);
-                }}
-              />
-            </label>
-          </div>
-          <div>
-            <label>
-              <Input
-                required
-                type="email"
-                name="email"
-                placeholder="E-mail"
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                }}
-              />
-            </label>
-          </div>
-          <div>
-            <label>
-              <Input
-                required
-                type="text"
-                name="city"
-                placeholder="Miasto"
-                onChange={(e) => {
-                  setCity(e.target.value);
-                }}
-              />
-            </label>
-          </div>
+          {user ? null : (
+            <div>
+              <div>
+                <label>
+                  <Input
+                    required
+                    type="number"
+                    name="phone"
+                    placeholder="Telefon"
+                    onChange={(e) => {
+                      setPhone(e.target.value);
+                    }}
+                  />
+                </label>
+              </div>
+              <div>
+                <label>
+                  <Input
+                    required
+                    type="email"
+                    name="email"
+                    placeholder="E-mail"
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                    }}
+                  />
+                </label>
+              </div>
+              <div>
+                <label>
+                  <Input
+                    required
+                    type="text"
+                    name="city"
+                    placeholder="Miasto"
+                    onChange={(e) => {
+                      setCity(e.target.value);
+                    }}
+                  />
+                </label>
+              </div>
+            </div>
+          )}
+
           <div>
             <Input
               type="file"

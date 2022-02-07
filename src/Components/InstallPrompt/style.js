@@ -2,19 +2,20 @@ import styled from "styled-components";
 import breakpoint from "styled-components-breakpoint";
 
 export const Wrapper = styled.div`
-  background-color: #1f1e1c;
-  color: white;
+  /* background-color: #1f1e1c; */
+  /* color: white; */
   display: flex;
-  position: fixed;
+  /* position: fixed; */
+  padding: 0 30px;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  min-width: 300px;
-  width: 100%;
-  top: 0;
-  width: 100%;
-  border-radius: 0 0 25px 25px;
-  z-index: 2;
+  /* min-width: 300px; */
+  /* width: 100%; */
+  /* top: 0; */
+  /* width: 100%; */
+  /* border-radius: 0 0 25px 25px; */
+  /* z-index: 2; */
 `;
 
 export const Info = styled.p`
@@ -36,4 +37,12 @@ export const Image = styled.img`
     opacity: 0.7;
     cursor: pointer;
   }
+`;
+export const Title = styled.h3`
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 5px;
+  color: white;
+  font-family: "Press Start 2P";
 `;

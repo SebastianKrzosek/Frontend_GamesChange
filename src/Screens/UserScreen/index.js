@@ -36,19 +36,37 @@ const UserScreen = (props) => {
   };
 
   const getUser = async () => {
+    let dataFromWeb = false;
     await fetch(
       `http://localhost:8080/api/profile/:${props.match.params.userid}`
     )
       .then((response) => response.json())
-      .then((data) => setUser(data))
+      .then((data) => {
+        dataFromWeb = true;
+        console.log("from web", data);
+        setUser(data);
+      })
       .catch((err) => console.error(err));
+
+    if ("caches" in window) {
+      window.caches
+        .match("http://localhost:8080/api/posts/wall")
+        .then((response) => response.json())
+        .then((data) => {
+          if (!dataFromWeb) {
+            console.log("from cache", data);
+            setUser(data);
+          }
+        });
+    }
   };
 
   return (
     <BackgroundContainer>
       <SmallPostsContainer>
-        <UserInfoContainer>
-          {user ? (
+        {user &&
+        user.profile !== "Nie ma użytkownika o takim identyfikatorze" ? (
+          <UserInfoContainer>
             <UserInfoWrapper>
               <LeftInfo>
                 <UserInfo>{user.login}</UserInfo>
@@ -59,8 +77,8 @@ const UserScreen = (props) => {
                 <UserInfo>{user.phone}</UserInfo>
               </RightInfo>
             </UserInfoWrapper>
-          ) : null}
-        </UserInfoContainer>
+          </UserInfoContainer>
+        ) : null}
         {userPosts &&
           userPosts.map((post) => {
             return (

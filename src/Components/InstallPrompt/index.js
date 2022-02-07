@@ -2,7 +2,7 @@
 import React from "react";
 import usePWA from "react-pwa-install-prompt";
 import DownloadApp from "../../Images/dlc.png";
-import { Wrapper, Image, Info } from "./style";
+import { Wrapper, Image, Info, Title } from "./style";
 
 const Example = () => {
   const { isStandalone, isInstallPromptSupported, promptInstall } = usePWA();
@@ -16,7 +16,7 @@ const Example = () => {
 
   return (
     <Wrapper>
-      <Info>Pobierz apke:</Info>
+      <Title>Games Change</Title>
       <Image src={DownloadApp} alt="Install app" onClick={onClickInstall} />
     </Wrapper>
   );
