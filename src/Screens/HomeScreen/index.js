@@ -12,6 +12,7 @@ import Example from "../../Components/InstallPrompt";
 import LoginHeader from "../../Components/LoginHeader";
 import NavigationBar from "../../Components/NavigationBar";
 import SmallPost from "../../Components/SmallPost";
+import { ReadAllData } from "../../idbHelper";
 
 const HomeScreen = () => {
   const [posts, setPosts] = useState();
@@ -28,17 +29,26 @@ const HomeScreen = () => {
       })
       .catch((err) => console.error(err));
 
-    if ("caches" in window) {
-      window.caches
-        .match("http://localhost:8080/api/posts/wall")
-        .then((response) => response.json())
-        .then((data) => {
-          if (!dataFromWeb) {
-            console.log("from cache", data);
-            setPosts(data);
-          }
-        });
+    if ("indexedDB" in window) {
+      ReadAllData("posts").then((data) => {
+        if (!dataFromWeb) {
+          console.log("from idb:", data);
+          setPosts(data);
+        }
+      });
     }
+
+    // if ("caches" in window) {
+    //   window.caches
+    //     .match("http://localhost:8080/api/posts/wall")
+    //     .then((response) => response.json())
+    //     .then((data) => {
+    //       if (!dataFromWeb) {
+    //         console.log("from cache", data);
+    //         setPosts(data);
+    //       }
+    //     });
+    // }
   }, []);
 
   return (

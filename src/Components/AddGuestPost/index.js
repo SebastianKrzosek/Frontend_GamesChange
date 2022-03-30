@@ -9,8 +9,10 @@ import {
   TextArea,
   Button,
 } from "./style";
-
+import { WriteData } from "../../idbHelper";
+import { useHistory } from "react-router-dom";
 const AddGuestPost = () => {
+  let history = useHistory();
   const [type, setType] = useState("");
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
@@ -85,10 +87,38 @@ const AddGuestPost = () => {
       fd.append("phone", phone);
       fd.append("email", email);
       fd.append("city", city);
+      const syncPost = {
+        type: type,
+        title: title,
+        description: desc,
+        photo: photo,
+        phone: phone,
+        email: email,
+        city: city,
+      };
 
-      axios.post(`http://localhost:8080/api/posts/addguest`, fd).then((res) => {
-        console.log(res.data);
-      });
+      if ("serviceWorker" in navigator && "SyncManager" in window) {
+        navigator.serviceWorker.ready.then((sw) => {
+          console.log("post", syncPost);
+          WriteData("sync-post", syncPost)
+            .then(() => sw.sync.register("sync-new-post"))
+            .catch((err) => console.log(err));
+        });
+      } else {
+        axios
+          .post(`http://localhost:8080/api/posts/addguest`, fd)
+          .then((res) => {
+            console.log(res.data);
+            alert("post zostal dodany");
+          });
+      }
+
+      // zakomentowana opcja postow do testu background sync
+      // axios.post(`http://localhost:8080/api/posts/addguest`, fd).then((res) => {
+      //   console.log(res.data);
+      //   alert("post zostal dodany")
+      // });
+      history.push("/");
     } catch {
       alert(error);
     }

@@ -12,6 +12,14 @@ import { ExpirationPlugin } from "workbox-expiration";
 import { precacheAndRoute, createHandlerBoundToURL } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
 import { StaleWhileRevalidate } from "workbox-strategies";
+import axios from "axios";
+import { openDB } from "idb";
+import {
+  WriteData,
+  ClearData,
+  ReadAllData,
+  DeleteItemFromData,
+} from "./idbHelper";
 
 clientsClaim();
 
@@ -71,8 +79,9 @@ self.addEventListener("message", (event) => {
 });
 
 // Any other custom service worker logic can go here.
-const CACHE_STATIC_NAME = "static-v1";
-const CACHE_DYNAMIC_NAME = "dynamic-v1";
+// self.importScripts("./idbHelper.js");
+const CACHE_STATIC_NAME = "static-v8";
+const CACHE_DYNAMIC_NAME = "dynamic-v3";
 var STATIC_FILES = [
   "/",
   "/public/index.html",
@@ -97,6 +106,7 @@ var STATIC_FILES = [
   "/src/Screens/RegisterScreen/style.js",
   "/src/Screens/UserScreen/index.js",
   "/src/Screens/UserScreen/style.js",
+  "/src/idbHelper.js",
 ];
 
 self.addEventListener("install", (event) => {
@@ -111,6 +121,7 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   console.log("[Service Worker] activating service worker... ", event);
+  ClearData("posts");
   // event.waitUntil(
   //   caches.keys().then((keyList) => {
   //     return Promise.all(
@@ -137,10 +148,20 @@ self.addEventListener("fetch", (event) => {
       } else {
         return fetch(event.request)
           .then(function (res) {
-            return caches.open(CACHE_DYNAMIC_NAME).then(function (cache) {
-              cache.put(event.request.url, res.clone());
-              return res;
-            });
+            const cloneRes = res.clone();
+            cloneRes
+              .json()
+              .then((data) => {
+                for (let key in data) {
+                  if (typeof key != String) {
+                    WriteData("posts", data[key]);
+                  }
+                }
+              })
+              .catch((err) =>
+                console.error("[IndexedDB] Add to IndexedDB", err)
+              );
+            return res;
           })
           .catch((err) => {
             caches.open(CACHE_STATIC_NAME).then((cache) => {
@@ -153,3 +174,63 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
+self.addEventListener("sync", (event) => {
+  console.log("[Service Worker]: start sync proces", event);
+  if (event.tag === "sync-new-post") {
+    event.waitUntil(
+      ReadAllData("sync-post").then((data) => {
+        for (let dt of data) {
+          const fd = new FormData();
+          fd.append("type", dt.type);
+          fd.append("title", dt.title);
+          fd.append("description", dt.description);
+          fd.append("photo", dt.photo, dt.photo.name);
+          fd.append("phone", dt.phone);
+          fd.append("email", dt.email);
+          fd.append("city", dt.city);
+
+          fetch(`http://localhost:8080/api/posts/addguest`, {
+            method: "post",
+            body: fd,
+          })
+            .then((res) => {
+              console.log("post zostal dodany ", res.data);
+              if (res.ok) {
+                DeleteItemFromData("sync-post", dt.id);
+              }
+            })
+            .catch((err) => {
+              console.error("[Error]: Service Worker sync event:", err);
+            });
+        }
+      })
+    );
+  }
+});
+
+// without idb //
+// self.addEventListener("fetch", (event) => {
+//   event.respondWith(
+//     caches.match(event.request).then((response) => {
+//       if (response) {
+//         return response;
+//       } else {
+//         return fetch(event.request)
+//           .then(function (res) {
+//             return caches.open(CACHE_DYNAMIC_NAME).then(function (cache) {
+//               cache.put(event.request.url, res.clone());
+//               return res;
+//             });
+//           })
+//           .catch((err) => {
+//             caches.open(CACHE_STATIC_NAME).then((cache) => {
+//               if (event.request.headers.get("accept").includes("text/html")) {
+//                 return cache.match("/src/Screens/OfflineScreen/index.js");
+//               }
+//             });
+//           });
+//       }
+//     })
+//   );
+// });
