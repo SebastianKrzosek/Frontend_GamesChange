@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import PuzzleIcon from "../../Images/puzzle.png";
 import {
   AddPostContainer,
   Title,
@@ -101,7 +102,19 @@ const AddGuestPost = () => {
         navigator.serviceWorker.ready.then((sw) => {
           console.log("post", syncPost);
           WriteData("sync-post", syncPost)
-            .then(() => sw.sync.register("sync-new-post"))
+            .then(() => {
+              const options = {
+                body: "Odczekaj chwile, aby znaleźć go na ekranie głównym aplikacji!",
+                icon: PuzzleIcon,
+                vibrate: [100, 50, 200],
+                tag: "upload-post-notification",
+                renotify: true,
+              };
+              navigator.serviceWorker.ready.then((swreg) => {
+                swreg.showNotification("Post został dodany!", options);
+              });
+              sw.sync.register("sync-new-post");
+            })
             .catch((err) => console.log(err));
         });
       } else {

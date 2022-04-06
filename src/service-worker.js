@@ -12,8 +12,8 @@ import { ExpirationPlugin } from "workbox-expiration";
 import { precacheAndRoute, createHandlerBoundToURL } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
 import { StaleWhileRevalidate } from "workbox-strategies";
-import axios from "axios";
-import { openDB } from "idb";
+// import axios from "axios";
+// import { openDB } from "idb";
 import {
   WriteData,
   ClearData,
@@ -80,8 +80,8 @@ self.addEventListener("message", (event) => {
 
 // Any other custom service worker logic can go here.
 // self.importScripts("./idbHelper.js");
-const CACHE_STATIC_NAME = "static-v8";
-const CACHE_DYNAMIC_NAME = "dynamic-v3";
+const CACHE_STATIC_NAME = "static-v3";
+// const CACHE_DYNAMIC_NAME = "dynamic-v3";
 var STATIC_FILES = [
   "/",
   "/public/index.html",
@@ -206,6 +206,20 @@ self.addEventListener("sync", (event) => {
         }
       })
     );
+  }
+});
+
+self.addEventListener("notificationclick", (event) => {
+  const not = event.notification;
+  const action = event.action;
+
+  console.log(not);
+  if (action === "confirm") {
+    console.log("confirmed notification");
+    not.close();
+  } else {
+    console.log("Cancal notification");
+    not.close();
   }
 });
 

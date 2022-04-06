@@ -8,6 +8,7 @@ import {
   Input,
   InputWrapper,
 } from "./style";
+import ChestIcon from "../../Images/chest.png";
 import Example from "../../Components/InstallPrompt";
 import LoginHeader from "../../Components/LoginHeader";
 import NavigationBar from "../../Components/NavigationBar";
@@ -17,15 +18,34 @@ import { ReadAllData } from "../../idbHelper";
 const HomeScreen = () => {
   const [posts, setPosts] = useState();
   const [title, setTitle] = useState("");
+  // const [notification, setNotification] = useState(false);
 
   useEffect(() => {
+    let count = localStorage.getItem("PostsCount");
+    if (count) {
+      console.log("licznik:", count);
+    }
     let dataFromWeb = false;
     fetch("http://localhost:8080/api/posts/wall")
       .then((response) => response.json())
       .then((data) => {
         dataFromWeb = true;
         console.log("from web", data);
+        console.log("data lenght", data.length);
         setPosts(data);
+        if (count != data.length) {
+          const options = {
+            body: "W aplikacji znalazły się nowe ogłoszenia!",
+            icon: ChestIcon,
+            vibrate: [100, 50, 200],
+            tag: "new-post-notification",
+            renotify: true,
+          };
+          navigator.serviceWorker.ready.then((swreg) => {
+            swreg.showNotification("Nowe ogłoszenia!", options);
+          });
+          localStorage.setItem("PostsCount", data.length);
+        }
       })
       .catch((err) => console.error(err));
 
@@ -34,6 +54,18 @@ const HomeScreen = () => {
         if (!dataFromWeb) {
           console.log("from idb:", data);
           setPosts(data);
+        }
+      });
+    }
+
+    if ("Notification" in window) {
+      Notification.requestPermission((res) => {
+        if (res !== "granted") {
+          // setNotification(false);
+          console.log("Notification status: ", res);
+        } else {
+          // setNotification(true);
+          console.log("Notification status: ", res);
         }
       });
     }
