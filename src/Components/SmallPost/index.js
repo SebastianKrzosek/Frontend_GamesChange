@@ -16,6 +16,9 @@ const SmallPost = (props) => {
   let path;
   if (props.props.photo) {
     path = "http://localhost:8080/" + props.props.photo.replace(/\\/g, "/");
+    // path =
+    // "https://gameschange.herokuapp.com/" +
+    // props.props.photo.replace(/\\/g, "/");
   }
 
   return (

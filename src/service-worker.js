@@ -79,10 +79,8 @@ self.addEventListener("message", (event) => {
 });
 
 // Any other custom service worker logic can go here.
-// self.importScripts("./idbHelper.js");
 const CACHE_STATIC_NAME = "static-v3";
-// const CACHE_DYNAMIC_NAME = "dynamic-v3";
-var STATIC_FILES = [
+let STATIC_FILES = [
   "/",
   "/public/index.html",
   "/public/fonts/font.css",
@@ -122,21 +120,6 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   console.log("[Service Worker] activating service worker... ", event);
   ClearData("posts");
-  // event.waitUntil(
-  //   caches.keys().then((keyList) => {
-  //     return Promise.all(
-  //       keyList.map((key) => {
-  //         if (
-  //           key !== CACHE_STATIC_NAME &&
-  //           key !== CACHE_DYNAMIC_NAME &&
-  //           key !== "workbox-precache-v2"
-  //         ) {
-  //           caches.delete(key);
-  //         }
-  //       })
-  //     );
-  //   })
-  // );
   return clientsClaim();
 });
 
@@ -191,6 +174,7 @@ self.addEventListener("sync", (event) => {
           fd.append("city", dt.city);
 
           fetch(`http://localhost:8080/api/posts/addguest`, {
+            // fetch(`https://gameschange.herokuapp.com/api/posts/addguest`, {
             method: "post",
             body: fd,
           })

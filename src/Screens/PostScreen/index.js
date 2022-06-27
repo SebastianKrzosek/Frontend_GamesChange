@@ -27,6 +27,7 @@ const PostScreen = (props) => {
   useEffect(() => {
     let dataFromWeb = false;
     fetch("http://localhost:8080/api/posts/wall")
+      // fetch("https://gameschange.herokuapp.com/api/posts/wall")
       .then((response) => response.json())
       .then((data) =>
         data.map((post) => {
@@ -42,6 +43,7 @@ const PostScreen = (props) => {
     if ("caches" in window) {
       window.caches
         .match("http://localhost:8080/api/posts/wall")
+        // .match("https://gameschange.herokuapp.com/api/posts/wall")
         .then((response) => response.json())
         .then((data) => {
           if (!dataFromWeb) {
@@ -54,7 +56,6 @@ const PostScreen = (props) => {
 
   return post ? (
     <BackgroundContainer>
-      {console.log(post)}
       <PostContainer>
         <div>
           <TitleContainer>
@@ -71,6 +72,10 @@ const PostScreen = (props) => {
                     src={
                       "http://localhost:8080/" + post.photo.replace(/\\/g, "/")
                     }
+                    // src={
+                    //   "https://gameschange.herokuapp.com/" +
+                    //   post.photo.replace(/\\/g, "/")
+                    // }
                     alt=""
                   ></Image>
                 ) : null}

@@ -22,6 +22,7 @@ const UserScreen = (props) => {
   }, []);
 
   const getPosts = async () => {
+    // await fetch("https://gameschange.herokuapp.com/api/posts/wall")
     await fetch("http://localhost:8080/api/posts/wall")
       .then((response) => response.json())
       .then((data) => {
@@ -37,6 +38,9 @@ const UserScreen = (props) => {
 
   const getUser = async () => {
     let dataFromWeb = false;
+    // await fetch(
+    //   `https://gameschange.herokuapp.com/api/profile/:${props.match.params.userid}`
+    // )
     await fetch(
       `http://localhost:8080/api/profile/:${props.match.params.userid}`
     )
@@ -49,6 +53,7 @@ const UserScreen = (props) => {
       .catch((err) => console.error(err));
 
     if ("caches" in window) {
+      // .match("https://gameschange.herokuapp.com/api/posts/wall")
       window.caches
         .match("http://localhost:8080/api/posts/wall")
         .then((response) => response.json())

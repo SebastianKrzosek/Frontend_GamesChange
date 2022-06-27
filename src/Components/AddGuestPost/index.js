@@ -29,6 +29,7 @@ const AddGuestPost = () => {
     const tok = localStorage.getItem("token");
     setToken(tok);
 
+    // fetch("https://gameschange.herokuapp.com/api/profile/current", {
     fetch("http://localhost:8080/api/profile/current", {
       headers: new Headers({
         Authorization: tok,
@@ -120,6 +121,7 @@ const AddGuestPost = () => {
       } else {
         axios
           .post(`http://localhost:8080/api/posts/addguest`, fd)
+          // .post(`https://gameschange.herokuapp.com/api/posts/addguest`, fd)
           .then((res) => {
             console.log(res.data);
             alert("post zostal dodany");

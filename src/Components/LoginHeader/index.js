@@ -23,7 +23,7 @@ const LoginHeader = () => {
               history.push("/");
             }}
           >
-            logout
+            Wyloguj
           </Text>
         </Wrapper>
       ) : (
@@ -34,7 +34,7 @@ const LoginHeader = () => {
               history.push("/register");
             }}
           >
-            register
+            Rejestracja
           </Text>
           <Text
             to="/login"
@@ -42,7 +42,7 @@ const LoginHeader = () => {
               history.push("/login");
             }}
           >
-            login
+            Logowanie
           </Text>
         </Wrapper>
       )}

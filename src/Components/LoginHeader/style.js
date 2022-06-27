@@ -27,7 +27,7 @@ export const Text = styled(Link)`
   text-decoration: none;
   font-family: "Press Start 2P";
   font-size: 10px;
-  padding: 4px;
+  padding: 15px;
   color: white;
 
   &:hover,

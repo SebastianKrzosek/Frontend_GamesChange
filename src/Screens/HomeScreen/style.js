@@ -20,7 +20,7 @@ export const SmallPostsContainer = styled.div`
   margin-left: auto;
   margin-right: auto;
   flex-direction: column;
-  padding: 20px;
+  padding: 20px 0px 50px 0px;
   margin-bottom: 50px;
 `;
 

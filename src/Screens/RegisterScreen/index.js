@@ -55,6 +55,7 @@ const RegisterScreen = () => {
       }
 
       fetch("http://localhost:8080/api/profile/register", {
+        // fetch("https://gameschange.herokuapp.com/api/profile/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
